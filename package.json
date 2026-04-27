@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "canvas": "^3.2.3"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.3.13"
+  }
+}

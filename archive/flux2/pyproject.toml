@@ -1,0 +1,16 @@
+[project]
+name = "flux-native"
+version = "0.2.0"
+description = "FLUX.2 image generation using Diffusers"
+requires-python = ">=3.12"
+dependencies = [
+    "diffusers",
+    "transformers",
+    "accelerate",
+    "torch",
+    "torchvision",
+    "pillow",
+]
+
+[tool.uv]
+python-preference = "only-managed"

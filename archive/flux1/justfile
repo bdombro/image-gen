@@ -1,0 +1,60 @@
+_:
+    @just --list
+
+setup:
+    uv sync
+
+# ── Text-to-image ──────────────────────────────────────────────
+run:
+    uv run flux.py
+
+# Pass-through recipe:  just run "prompt text" --seed 42 --steps 20
+run-cmd *args:
+    uv run flux.py {{ args }}
+
+# ── Img2img ────────────────────────────────────────────────────
+
+# Make a character look more 2d
+two-d:
+    uv run flux.py \
+        -i ../dist/alchemist.png \
+        -o ../dist/alchemist-2d.png \
+        --strength 0.8 \
+        --steps 10 \
+        "2d game character, facing forward, front profile view, #00FF00 background, clean edges, zero shading, fully visible, no cropping"
+
+# ── ControlNet conditioning ───────────────────────────────────
+
+# Make facing right sprite using ControlNet (canny structural preservation)
+face-right:
+    uv run flux.py \
+        -i ../refs/girl-warrior.png \
+        --input-control ../refs/girl-warrior.png \
+        -o dist/girl-warrior-r1.png \
+        --strength 0.9 \
+        --steps 4 \
+        "EXACT right-facing side profile, character rotated 90 degrees right, #00FF00 background, clean edges, zero shading, fully visible, no cropping"
+
+# ── Both combined ──────────────────────────────────────────────
+
+# Img2img + ControlNet simultaneously (canny structural preservation)
+both *args:
+    uv run flux.py -i ../input.png --input-control ../input.png {{ args }}
+
+# ── Batch / Sprite sheets ────────────────────────────────────
+
+# Generate character sprite frames from a control image, then assemble a sprite sheet
+sprites *args:
+    uv run python3 sprites.py character {{ args }}
+
+# Composite a weapon onto existing sprites
+weapon *args:
+    uv run python3 sprites.py character-with-weapon {{ args }}
+
+# Generate a standalone weapon sprite
+weapon-gen *args:
+    uv run python3 sprites.py weapon {{ args }}
+
+# Full pipeline: generate weapon + character + composite
+all *args:
+    uv run python3 sprites.py all {{ args }}

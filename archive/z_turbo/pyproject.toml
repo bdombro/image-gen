@@ -1,0 +1,21 @@
+[project]
+name = "z-turbo"
+version = "0.1.0"
+description = "Z-Image-Turbo inference script"
+requires-python = ">=3.12"
+dependencies = [
+    "diffusers",
+    "transformers",
+    "accelerate",
+    "torch",
+    "torchvision",
+    "pillow",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+]
+
+[tool.uv]
+python-preference = "only-managed"

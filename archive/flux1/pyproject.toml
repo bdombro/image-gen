@@ -1,0 +1,17 @@
+[project]
+name = "flux1-native"
+version = "0.3.0"
+description = "FLUX.1 image generation with ControlNet for sprite compositing"
+requires-python = ">=3.12"
+dependencies = [
+    "diffusers",
+    "transformers",
+    "accelerate",
+    "torch",
+    "torchvision",
+    "pillow",
+    "opencv-python",
+]
+
+[tool.uv]
+python-preference = "only-managed"

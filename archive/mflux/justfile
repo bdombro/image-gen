@@ -1,0 +1,120 @@
+_:
+    @just --list
+
+# Setup the custom python CLI - 
+setup:
+    uv sync
+
+# Run the custom python CLI - 
+run:
+    uv run flux.py
+
+# Run the custom python CLI - Pass-through recipe:  just run "prompt text" --seed 42 --steps 20
+run-cmd *args:
+    uv run flux.py {{ args }}
+
+# Run the custom python CLI to make a sprite
+sprite-character-custom:
+    uv run flux.py "2d pixel art SNES style game character sprite; eyes open, looking at viewer, cute, crazy hair; background: solid #00FFee; front view, empty hands to the side."
+
+# Run the custom python CLI to make a sprite
+edit-example:
+    # seems really bad at making substantial edits to the image unless you lose most of the original image
+    # uv run flux.py -i ../refs/girl-warrior.png --strength 0.4 --steps 25 "Game character, front view, empty hands to the side."
+    # uv run flux.py -i ../refs/girl.jpg ../refs/glasses.png --strength 0.6 --steps 4 "Make the woman wear the eyeglasses (regular glasses, not sunglasses)"
+
+# Do a edit using official CLI
+photorealistic-girl-wearing-glasses:
+    mflux-generate-flux2-edit \
+        --model flux2-klein-9b \
+        --image-paths ../refs/girl.jpg ../refs/glasses.png \
+        --prompt "Make the woman wear the eyeglasses (regular glasses, not sunglasses)" \
+        --steps 4 \
+        --seed 42 \
+        --output dist/girl-wearing-glasses.png
+
+# Create a sprite char using official CLI
+sprite-character:
+    # mflux comes with CLI tools, like mflux-generate-flux2-edit 
+    # Ex from https://github.com/filipstrand/mflux/blob/main/src/mflux/models/flux2/README.md
+    mflux-generate-flux2 \
+        --model flux2-klein-9b \
+        --prompt "Make 2d pixel art sprite of a girl viewed from front; Has crazy hair; facing and looking at front" \
+        --steps 4 \
+        --seed 42 \
+        --output dist/girl.png
+
+# Create a profile sprite using official CLI
+sprite-front:
+    mflux-generate-flux2-edit \
+        --model flux2-klein-9b \
+        --image-paths dist/girl-warrior.png \
+        --prompt "Make the girl empty-handed and resting her arms at her side" \
+        --steps 4 \
+        --seed 42 \
+        --output dist/front.png
+
+# Create a side-profile sprite using official CLI
+sprite-side:
+    mflux-generate-flux2-edit \
+        --model flux2-klein-9b \
+        --image-paths ../refs/girl-warrior.png \
+        --prompt "Make the girl side profile facing the right side of the screen, empty-handed and resting her arms at her side; Also remove the weapon" \
+        --steps 4 \
+        --seed 42 \
+        --output dist/side.png
+
+# Create a top-down sprite using official CLI
+sprite-top-down:
+    mflux-generate-flux2-edit \
+        --model flux2-klein-9b \
+        --image-paths ../refs/girl-warrior.png \
+        --prompt "Top-down 2D retro sprite, overhead run-and-gun style, camera straight down; Camera positioned high above looking straight down on the character like Grand Theft Auto GTA 2 style; The hair is big so all you can see is hair" \
+        --steps 4 \
+        --seed 42 \
+        --output dist/top-down.png
+
+# Create a profile with gun sprite using official CLI
+sprite-front-with-gun:
+    @test -f "dist/front.png" || just sprite-front
+    mflux-generate-flux2-edit \
+        --model flux2-klein-9b \
+        --image-paths ../refs/front.png ../refs/blaster3.png \
+        --prompt "Make the girl carrying the blaster horizontally with right hand at rear and left hand at front; fighting expression on face with closed mouth" \
+        --steps 4 \
+        --seed 42 \
+        --output dist/front-with-gun.png
+
+# Create a side-profile with gun sprite using official CLI
+sprite-side-with-gun:
+    @test -f "dist/side.png" || just sprite-side
+    mflux-generate-flux2-edit \
+        --model flux2-klein-9b \
+        --image-paths dist/side.png ../refs/blaster3.png \
+        --prompt "Make the girl holding the blaster perfectly horizontally with right hand at rear and left hand at front of blaster, and aiming at 3 o'clock; fighting expression on face with closed mouth;" \
+        --steps 4 \
+        --seed 42 \
+        --output dist/side-with-gun.png
+
+# Create a top-down gun sprite using official CLI
+sprite-top-down-gun:
+    mflux-generate-flux2-edit \
+        --model flux2-klein-9b \
+        --image-paths ../refs/blaster3.png \
+        --prompt "Top-down 2D retro sprite, overhead run-and-gun style, camera straight down; Camera positioned high above looking straight down on the blaster gun like Grand Theft Auto GTA 2 style; zoomed out enough to see the rear and front with padding all around; no cropping; pointed to bottom edge at 6 o'clock" \
+        --steps 4 \
+        --seed 42 \
+        --output dist/top-down-gun.png
+
+# Create a top-down with gun sprite using official CLI
+sprite-top-down-with-gun:
+    @test -f "dist/top-down.png" || just sprite-top-down
+    mflux-generate-flux2-edit \
+        --model flux2-klein-9b \
+        --image-paths dist/top-down.png ../refs/blaster3-down2.png \
+        --prompt "Make the top-down view of the girl, who is facing the bottom edge of the view, to have the girl holding the blaster gun; The blaster gun is already pointing to 6 o'clock toward the bottom edge;" \
+        --steps 4 \
+        --seed 42 \
+        --output dist/top-down-with-gun.png
+
+

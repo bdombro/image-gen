@@ -1,0 +1,54 @@
+_:
+    @just --list
+
+setup:
+    uv sync
+    @echo "Done. Run: uv run z_turbo.py ..."
+
+run:
+    uv run z_turbo.py -i ../input.png -o ../dist/z_turbo.png --cfg=3.5 --strength=.4 --steps=2 \
+        "change the hair to be blue and spiky; keep everything else exactly the same"
+
+image-to-snes:
+    uv run z_turbo.py -i ../input.png -o ../dist/z_turbo.png --cfg=3.5 --strength=.3 --steps=12 \
+        -n "black lines, borders, text" \
+        "Top-down pixel art sprite. 16 colors. Crisp edges. Solid chromakey green #00FF00 background"
+
+image-to-lofi:
+    uv run z_turbo.py -i ../input.png -o ../dist/z_turbo3.png --cfg=3.5 --strength=.3 --steps=12 \
+        -n "black lines, borders, text" \
+        "lo-fi game character"
+
+image-to-right:
+    uv run z_turbo.py -i ../dist/z_turbo3.png -o ../dist/z_turbo4.png --cfg=0 --strength=.35 --steps=12 \
+        -n "black lines, borders, text" \
+        "facing right, side profile view"
+
+run-face-right:
+    uv run z_turbo.py \
+        -i ../dist/z_turbo3.png \
+        -o ../dist/z_turbo4.png \
+        -c ../dist/face-right-control.png \
+        --control-scale 0.65 \
+        --cfg 0 \
+        --strength .5 \
+        --steps 12 \
+        -n "black lines, borders, text" \
+        "game sprite, facing right, side profile view"
+
+run-room:
+    uv run z_turbo.py \
+        "Top-down pixel art RPG room of a haunted mansion bedroom interior with stone walls, wooden floor, 2 doors, red carpet runner along the path between the doors, a large bed with red curtains in the top-left corner, a stone fireplace on the right wall with orange fire, a wooden table with a candelabra in the top-right, a bookshelf against the left wall, skulls and bones on the floor, torches on the walls casting warm orange light, spooky gothic atmosphere" \
+        -c ../dist/route.png \
+        --control-scale 0.5 \
+        --cfg 0.0 \
+        --steps 12 \
+        --seed 42 \
+        --width 512 \
+        --height 512 \
+        -n "abstract, blurry, empty, monochrome, modern" \
+        -o ../dist/room.png
+
+# Pass-through recipe:  just run -i input.png "prompt text"
+run-cmd *args:
+    uv run z_turbo.py {{ args }}
